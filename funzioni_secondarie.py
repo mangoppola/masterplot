@@ -16,7 +16,7 @@ def fileselect():
     files = []
     dirlist = os.listdir("./")
     for file in dirlist:
-        if file.endswith(".csv") or file.endswith(".xlsx"):
+        if file.lower().endswith(".csv") or file.lower().endswith(".xlsx"):
             files.append(file)
             
     # se non ci sono files, termina il programma
@@ -71,13 +71,12 @@ def fileselect():
 #SALVATAGGIO AD ALTA RISOLUZIONE
 def print_plot(filename):
     #cerco il punto, poi cancello l'estensione
-    print(filename.rfind("."))
     filename = filename[:filename.rfind(".")]
     #questa parte serve ad evitare la sovrascrizione automatica
     dirlist = os.listdir("./")
-    if filename in dirlist:
-        input("Il file esiste già. Vuoi sovrascriverlo? [y o invio per confermare]: ")
-        if input == "y" or input == "":
+    if (filename + ".png") in dirlist:
+        choice = input("Il file esiste già. Vuoi sovrascriverlo? [y o invio per confermare]: ")
+        if choice == "y" or choice == "":
             plt.savefig(filename, dpi=1600)
     else:
         plt.savefig(filename, dpi=1600)
@@ -101,7 +100,7 @@ def curve_fit(func,initial_guess,data):
         model=scipy.odr.Model(func)
         
         ##CURVE FITTING
-        #sto caricando x, xerr, y, yerr
+        #sto caricando x, y, xerr, yerr
         mydata= scipy.odr.RealData(data[0],data[1],data[2],data[3])
         fit = scipy.odr.ODR(mydata,model,initial_guess)
         #Fit = minimi quadrati
