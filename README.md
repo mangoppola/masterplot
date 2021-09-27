@@ -29,4 +29,3 @@ Utilizzo
 + Se hai bisogno di fare un fit, assicurati di modificare la sezione *Curve fitting*. Imposta la funzione che vuoi usare per il fit e di dare una initial guess
 + Controlla la sezione in fondo per eventuali opzioni aggiuntive che desideri
 + Avvia il programma e segui le istruzioni
-+
