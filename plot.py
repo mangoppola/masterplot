@@ -24,7 +24,7 @@ def model(beta,x):
 initial_guess = [0,0,0]
 selection = input("Hai bisogno di fare un fit? [y o invio per confermare]: ")
 if selection == "y" or selection == "":
-    data = [x,xerror,y,yerror]
+    data = [x,y,xerror,yerror]
     curve_fit(model,initial_guess,data)
     
 ##DEFINIZIONE ETICHETTE
