@@ -25,7 +25,7 @@ def fileselect():
         
     #se il file è uno, assumo che sia quello giusto
     if len(files) == 1:
-        return(files[0])
+        nome = files[0]
     else:
         #mostra la lista dei files trovati
         i = 1
@@ -43,7 +43,6 @@ def fileselect():
             
         #converto il file se è excel
         if nome.endswith(".xlsx"):
-            xlsx = openpyxl.load_workbook(nome)
             ## opening the xlsx file
             xlsx = openpyxl.load_workbook(nome)
             ## opening the active sheet
@@ -51,17 +50,28 @@ def fileselect():
             ## getting the data from the sheet
             data = sheet.rows
 
+            ## individuo il nome file
+            #Tolgo l'estensione
+            nome_file = str(nome)[:str(nome).rfind(".")]
+        
+            #controllo che non ci sia già un file csv con lo stesso nome, così non sovrascrivo niente
+            i=0
+            while os.path.exists(f"{nome_file}{i}.csv"):
+                i += 1
+            #Ho trovato il nuovo nome del file
+            nome = f"{nome_file}{i}.csv"
+            
             ## creating a csv file
-            csv = open("data.csv", "w+")
+            csv = open(nome, "w+")
             
             for row in data:
                 l = list(row)
                 for i in range(len(l)):
                     if i == len(l) - 1:
                         csv.write(str(l[i].value))
+                        csv.write('\n')
                     else:
                         csv.write(str(l[i].value) + ',')
-                    csv.write('\n')
             
             ## close the csv file
             csv.close()
