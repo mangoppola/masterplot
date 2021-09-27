@@ -9,10 +9,10 @@ from matplotlib import pyplot as plt
 from funzioni_secondarie import fileselect, print_plot, print_params, curve_fit
 
 ##SELEZIONE FILE
-n_graphs = input("Quanti grafici vuoi rappresentare:")
+n_graphs = int(input("Quanti grafici vuoi rappresentare? "))
 datasets = []
 labels = []
-for i in len(n_graphs):
+for i in range(n_graphs):
     print("Scegli il dataset" + str(i+1) + ": ")
     file = fileselect()
     datasets.append(file)
