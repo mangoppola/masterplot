@@ -71,7 +71,7 @@ def fileselect():
                         csv.write(str(l[i].value))
                         csv.write('\n')
                     else:
-                        csv.write(str(l[i].value) + ',')
+                        csv.write(str(l[i].value) + ';')
             
             ## close the csv file
             csv.close()
