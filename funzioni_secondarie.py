@@ -41,40 +41,40 @@ def fileselect():
             print("hai scelto un file che non esiste, scemo")
             sys.exit()
             
-        #converto il file se è excel
-        if nome.endswith(".xlsx"):
-            ## opening the xlsx file
-            xlsx = openpyxl.load_workbook(nome)
-            ## opening the active sheet
-            sheet = xlsx.active
-            ## getting the data from the sheet
-            data = sheet.rows
+    #converto il file se è excel
+    if nome.endswith(".xlsx"):
+        ## opening the xlsx file
+        xlsx = openpyxl.load_workbook(nome)
+        ## opening the active sheet
+        sheet = xlsx.active
+        ## getting the data from the sheet
+        data = sheet.rows
 
-            ## individuo il nome file
-            #Tolgo l'estensione
-            nome_file = str(nome)[:str(nome).rfind(".")]
-        
-            #controllo che non ci sia già un file csv con lo stesso nome, così non sovrascrivo niente
-            i=0
-            while os.path.exists(f"{nome_file}{i}.csv"):
-                i += 1
-            #Ho trovato il nuovo nome del file
-            nome = f"{nome_file}{i}.csv"
-            
-            ## creating a csv file
-            csv = open(nome, "w+")
-            
-            for row in data:
-                l = list(row)
-                for i in range(len(l)):
-                    if i == len(l) - 1:
-                        csv.write(str(l[i].value))
-                        csv.write('\n')
-                    else:
-                        csv.write(str(l[i].value) + ';')
-            
-            ## close the csv file
-            csv.close()
+        ## individuo il nome file
+        #Tolgo l'estensione
+        nome_file = str(nome)[:str(nome).rfind(".")]
+
+        #controllo che non ci sia già un file csv con lo stesso nome, così non sovrascrivo niente
+        i=0
+        while os.path.exists(f"{nome_file}{i}.csv"):
+            i += 1
+        #Ho trovato il nuovo nome del file
+        nome = f"{nome_file}{i}.csv"
+
+        ## creating a csv file
+        csv = open(nome, "w+")
+
+        for row in data:
+            l = list(row)
+            for i in range(len(l)):
+                if i == len(l) - 1:
+                    csv.write(str(l[i].value))
+                    csv.write('\n')
+                else:
+                    csv.write(str(l[i].value) + ';')
+
+        ## close the csv file
+        csv.close()
         return(nome)
         
 
@@ -99,6 +99,7 @@ def print_params(param_values, param_errors):
     print("Parametri del fit:")
     for i in range(len(param_values)):
         print(str(i) + ": \t" + str(param_values[i]) + "±" + str(param_errors[i]))
+    return(param_values,param_errors)
 
 ##FUNZIONE PER FITTING CURVA
 #func è il tuo modello, initial_guess la lista con le predizioni sui parametri
