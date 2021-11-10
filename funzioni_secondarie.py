@@ -75,7 +75,7 @@ def fileselect():
 
         ## close the csv file
         csv.close()
-        return(nome)
+    return(nome)
         
 
 #SALVATAGGIO AD ALTA RISOLUZIONE
@@ -93,13 +93,29 @@ def print_plot(filename):
         
 
             
-#STAMPA PARAMETRI DI FIT
-#In questa funzione, ti aspetti che values ed errors siano LISTE di valori
-def print_params(param_values, param_errors):
-    print("Parametri del fit:")
+#RESTITUISCE LA STRINGA CON TUTTI I PARAMETRI (eventualmente, la stampa a schermo)
+# @names è una lista di nomi per le variabili che stai fittando. Normalmente, vengono dati come nomi i numeri interi
+# @decimal_places è il numero di cifre decimali che desideri nel tuo output
+# @notab serve a sostituire la tabulazione con un dato numero di spazi. Impostalo a true se vuoi usarlo nel grafico perchè a matplotlib non piace il \t
+# @print_text serve a stampare il testo in console
+def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[0]))), decimal_places = 3, notab = False, print_text = True):
+    text = ""
     for i in range(len(param_values)):
         print(str(i) + ": \t" + str(param_values[i]) + "±" + str(param_errors[i]))
     return(param_values,param_errors)
+        text += (str(names[i]) + ": \t" +
+                 str(round(param_values[i], decimal_places)) + "±" +
+                 str(round(param_errors[i], decimal_places)))
+        #se non sono arrivato all'ultimo elemento, passo alla prossima riga
+        if i != (len(param_values) - 1):
+            text += "\n"
+    if notab:
+        text = text.replace("\t", " ")
+        
+    if print_text:
+        print("Parametri del fit:")
+        print (text)
+    return (text)
 
 ##FUNZIONE PER FITTING CURVA
 #func è il tuo modello, initial_guess la lista con le predizioni sui parametri
@@ -117,7 +133,7 @@ def curve_fit(func,initial_guess,data):
         #Fit = minimi quadrati
         scipy.odr.ODR.set_job(fit,fit_type=2)
         output=scipy.odr.ODR.run(fit)
-        print_params(output.beta, output.sd_beta)
+        parameters_text(output.beta, output.sd_beta, print_text = True)
         
         
         ##PLOT CURVA DI FIT
@@ -125,3 +141,4 @@ def curve_fit(func,initial_guess,data):
         xFit=np.arange(min(x),max(x),(max(x)-min(x))/1000)
         yFit= func(output.beta, xFit)
         plt.plot(xFit,yFit)
+    return(output.beta,output.sd_beta)
