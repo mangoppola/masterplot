@@ -54,7 +54,8 @@ plt.ylabel("Asse y [udm]")
 #plt.xscale("Log")
 ##Questo serve per scegliere range e scansione degli assi
 #plt.yticks(np.arange(ymin, ymax, larghezza_tacche))
-
+##Togli il commento per aggiungere la legenda
+#plt.legend()
 
 ##Stampa plot e mostralo in console
 print_plot(nome)
