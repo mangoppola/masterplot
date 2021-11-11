@@ -117,7 +117,7 @@ def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[
 
 ##FUNZIONE PER FITTING CURVA
 #func è il tuo modello, initial_guess la lista con le predizioni sui parametri
-def curve_fit(func,initial_guess,data):
+def curve_fit(func,initial_guess,data, label = ""):
     #se non hai impostato un modello o non hai dato guess iniziali, chiudo il programma
     if func == "" or initial_guess == []: 
         raise ValueError("Devi inserire un modello. Controlla riga 14")
@@ -138,5 +138,5 @@ def curve_fit(func,initial_guess,data):
         x = data[0]
         xFit=np.arange(min(x),max(x),(max(x)-min(x))/1000)
         yFit= func(output.beta, xFit)
-        plt.plot(xFit,yFit)
+        plt.plot(xFit,yFit, label = label)
     return(output.beta,output.sd_beta)
