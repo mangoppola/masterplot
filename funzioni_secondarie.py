@@ -101,8 +101,6 @@ def print_plot(filename):
 def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[0]))), decimal_places = 3, notab = False, print_text = True):
     text = ""
     for i in range(len(param_values)):
-        print(str(i) + ": \t" + str(param_values[i]) + "±" + str(param_errors[i]))
-    return(param_values,param_errors)
         text += (str(names[i]) + ": \t" +
                  str(round(param_values[i], decimal_places)) + "±" +
                  str(round(param_errors[i], decimal_places)))
