@@ -18,6 +18,7 @@ plt.errorbar(x, y, xerr=xerror, yerr=yerror, fmt="o", ecolor="black",
              barsabove=False, ms=0.5, label="Dati Sperimentali")
 
 ##MODIFICARE SE VUOI UN FIT
+#@label in curve_fit: aggiornare per inserire una etichetta al fit da mostrare in legenda.
 #esempio di modello: beta[0]+beta[1]*np.cos(x**2)
 def model(beta,x):
     return beta[0]*np.cos(beta[1]*x+beta[2])
@@ -26,7 +27,7 @@ initial_guess = [0,0,0]
 selection = input("Hai bisogno di fare un fit? [y o invio per confermare]: ")
 if selection == "y" or selection == "":
     data = [x,y,xerror,yerror]
-    fit_parameters = curve_fit(model, initial_guess, data)
+    fit_parameters = curve_fit(model, initial_guess, data, label = "")
     
     # aggiungo i parametri del fit come testo
     # modificare names per mettere i giusti nomi dei parametri del fit
