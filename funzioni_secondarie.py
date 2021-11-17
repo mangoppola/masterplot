@@ -79,17 +79,17 @@ def fileselect():
         
 
 #SALVATAGGIO AD ALTA RISOLUZIONE
-def print_plot(filename):
+def print_plot(filename, extension = "png"):
     #cerco il punto, poi cancello l'estensione
     filename = filename[:filename.rfind(".")]
     #questa parte serve ad evitare la sovrascrizione automatica
     dirlist = os.listdir("./")
-    if (filename + ".png") in dirlist:
+    if (filename + "." + extension) in dirlist:
         choice = input("Il file esiste già. Vuoi sovrascriverlo? [y o invio per confermare]: ")
         if choice == "y" or choice == "":
-            plt.savefig(filename, dpi=1600)
+            plt.savefig(filename + "." + extension, dpi=1600)
     else:
-        plt.savefig(filename, dpi=1600)
+        plt.savefig(filename + "." + extension, dpi=1600)
         
 
             
