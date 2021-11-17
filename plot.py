@@ -58,5 +58,5 @@ plt.ylabel("Asse y [udm]")
 #plt.legend()
 
 ##Stampa plot e mostralo in console
-print_plot(nome)
+print_plot(nome, extension = "png")
 plt.show()
