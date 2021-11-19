@@ -16,7 +16,7 @@ def fileselect():
     files = []
     dirlist = os.listdir("./")
     for file in dirlist:
-        if file.endswith(".csv") or file.endswith(".xlsx"):
+        if file.lower().endswith(".csv") or file.lower().endswith(".xlsx"):
             files.append(file)
             
     # se non ci sono files, termina il programma
@@ -25,7 +25,7 @@ def fileselect():
         
     #se il file è uno, assumo che sia quello giusto
     if len(files) == 1:
-        return(files[0])
+        nome = files[0]
     else:
         #mostra la lista dei files trovati
         i = 1
@@ -41,59 +41,83 @@ def fileselect():
             print("hai scelto un file che non esiste, scemo")
             sys.exit()
             
-        #converto il file se è excel
-        if nome.endswith(".xlsx"):
-            xlsx = openpyxl.load_workbook(nome)
-            ## opening the xlsx file
-            xlsx = openpyxl.load_workbook(nome)
-            ## opening the active sheet
-            sheet = xlsx.active
-            ## getting the data from the sheet
-            data = sheet.rows
+    #converto il file se è excel
+    if nome.endswith(".xlsx"):
+        ## opening the xlsx file
+        xlsx = openpyxl.load_workbook(nome)
+        ## opening the active sheet
+        sheet = xlsx.active
+        ## getting the data from the sheet
+        data = sheet.rows
 
-            ## creating a csv file
-            csv = open("data.csv", "w+")
-            
-            for row in data:
-                l = list(row)
-                for i in range(len(l)):
-                    if i == len(l) - 1:
-                        csv.write(str(l[i].value))
-                    else:
-                        csv.write(str(l[i].value) + ',')
+        ## individuo il nome file
+        #Tolgo l'estensione
+        nome_file = str(nome)[:str(nome).rfind(".")]
+
+        #controllo che non ci sia già un file csv con lo stesso nome, così non sovrascrivo niente
+        i=0
+        while os.path.exists(f"{nome_file}{i}.csv"):
+            i += 1
+        #Ho trovato il nuovo nome del file
+        nome = f"{nome_file}{i}.csv"
+
+        ## creating a csv file
+        csv = open(nome, "w+")
+
+        for row in data:
+            l = list(row)
+            for i in range(len(l)):
+                if i == len(l) - 1:
+                    csv.write(str(l[i].value))
                     csv.write('\n')
-            
-            ## close the csv file
-            csv.close()
-        return(nome)
+                else:
+                    csv.write(str(l[i].value) + ';')
+
+        ## close the csv file
+        csv.close()
+    return(nome)
         
 
 #SALVATAGGIO AD ALTA RISOLUZIONE
-def print_plot(filename):
+def print_plot(filename, extension = "png"):
     #cerco il punto, poi cancello l'estensione
-    print(filename.rfind("."))
     filename = filename[:filename.rfind(".")]
     #questa parte serve ad evitare la sovrascrizione automatica
     dirlist = os.listdir("./")
-    if filename in dirlist:
-        input("Il file esiste già. Vuoi sovrascriverlo? [y o invio per confermare]: ")
-        if input == "y" or input == "":
-            plt.savefig(filename, dpi=1600)
+    if (filename + "." + extension) in dirlist:
+        choice = input("Il file esiste già. Vuoi sovrascriverlo? [y o invio per confermare]: ")
+        if choice == "y" or choice == "":
+            plt.savefig(filename + "." + extension, dpi=1600)
     else:
-        plt.savefig(filename, dpi=1600)
+        plt.savefig(filename + "." + extension, dpi=1600)
         
 
             
-#STAMPA PARAMETRI DI FIT
-#In questa funzione, ti aspetti che values ed errors siano LISTE di valori
-def print_params(param_values, param_errors):
-    print("Parametri del fit:")
+#RESTITUISCE LA STRINGA CON TUTTI I PARAMETRI (eventualmente, la stampa a schermo)
+# @names è una lista di nomi per le variabili che stai fittando. Normalmente, vengono dati come nomi i numeri interi
+# @decimal_places è il numero di cifre decimali che desideri nel tuo output
+# @notab serve a sostituire la tabulazione con un dato numero di spazi. Impostalo a true se vuoi usarlo nel grafico perchè a matplotlib non piace il \t
+# @print_text serve a stampare il testo in console
+def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[0]))), decimal_places = 3, notab = False, print_text = True):
+    text = ""
     for i in range(len(param_values)):
-        print(str(i) + ": \t" + str(param_values[i]) + "±" + str(param_errors[i]))
+        text += (str(names[i]) + ": \t" +
+                 str(round(param_values[i], decimal_places)) + "±" +
+                 str(round(param_errors[i], decimal_places)))
+        #se non sono arrivato all'ultimo elemento, passo alla prossima riga
+        if i != (len(param_values) - 1):
+            text += "\n"
+    if notab:
+        text = text.replace("\t", " ")
+        
+    if print_text:
+        print("Parametri del fit:")
+        print (text)
+    return (text)
 
 ##FUNZIONE PER FITTING CURVA
 #func è il tuo modello, initial_guess la lista con le predizioni sui parametri
-def curve_fit(func,initial_guess,data):
+def curve_fit(func,initial_guess,data, label = ""):
     #se non hai impostato un modello o non hai dato guess iniziali, chiudo il programma
     if func == "" or initial_guess == []: 
         raise ValueError("Devi inserire un modello. Controlla riga 14")
@@ -101,17 +125,18 @@ def curve_fit(func,initial_guess,data):
         model=scipy.odr.Model(func)
         
         ##CURVE FITTING
-        #sto caricando x, xerr, y, yerr
+        #sto caricando x, y, xerr, yerr
         mydata= scipy.odr.RealData(data[0],data[1],data[2],data[3])
         fit = scipy.odr.ODR(mydata,model,initial_guess)
         #Fit = minimi quadrati
         scipy.odr.ODR.set_job(fit,fit_type=2)
         output=scipy.odr.ODR.run(fit)
-        print_params(output.beta, output.sd_beta)
+        parameters_text(output.beta, output.sd_beta, print_text = True)
         
         
         ##PLOT CURVA DI FIT
         x = data[0]
         xFit=np.arange(min(x),max(x),(max(x)-min(x))/1000)
         yFit= func(output.beta, xFit)
-        plt.plot(xFit,yFit)
+        plt.plot(xFit,yFit, label = label)
+    return(output.beta,output.sd_beta)
