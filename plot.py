@@ -45,8 +45,10 @@ if selection == "y" or selection == "":
     
 ##DEFINIZIONE ETICHETTE
 plt.title("Grafico")
-plt.xlabel("Asse x [udm]")
-plt.ylabel("Asse y [udm]")
+#Qui ci sono due esempi di pedici e di apici. Ricorda: il tuo testo deve essere racchiuso da due simboli di dollaro per usare apici e pedici; si usa _ per i pedici e ^ per gli apici;
+#se nel tuo apice o nel tuo pedice ci sono piú di una lettera, racchiudi tutto con delle graffe; se hai bisogno di includere uno spazio tra dei caratteri, usa \:
+plt.xlabel("$Dati_{asse \: x}$ [udm]")
+plt.ylabel("$Dati^{asse \: y}$ [udm]")
 
 
 ##PARAMETRI OPZIONALI: togli il commento a quelli che ti servono
