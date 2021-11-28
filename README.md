@@ -17,6 +17,7 @@ Le funzioni incluse in questa libreria sono
 Plot
 ----
 Questo file è quello che va utilizzato per creare e stampare un unico plot. Carica il file di dati e inizializza il grafico. Segue una sezione da utilizzare solo nel caso in cui serva fare un fit: *qui bisogna inserire la funzione da fittare e l'initial guess*. In questo file bisogna definire titolo del grafico e degli assi, nonchè eventuali parametri aggiuntivi (i.e. griglia, scala degli assi, range e scansione degli assi, etc.). Infine, il plot viene salvato e mostrato nella console
+**Nota utile**: é possibile usare esponenti e pedici nelle etichette dei grafici. Ad esempio, per digitare correttamente x²³, serve scrivere $x^{23}$; se scrivere I con pedice DS, devi scrivere $I_{DS}$
 
 Multiplot
 ----
@@ -29,3 +30,4 @@ Utilizzo
 + Se hai bisogno di fare un fit, assicurati di modificare la sezione *Curve fitting*. Imposta la funzione che vuoi usare per il fit e di dare una initial guess
 + Controlla la sezione in fondo per eventuali opzioni aggiuntive che desideri
 + Avvia il programma e segui le istruzioni
+
