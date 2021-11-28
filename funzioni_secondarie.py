@@ -100,35 +100,50 @@ def print_plot(filename, extension = "png"):
 # @notab serve a sostituire la tabulazione con un dato numero di spazi. Impostalo a true se vuoi usarlo nel grafico perchè a matplotlib non piace il \t
 # @print_text serve a stampare il testo in console
 def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[0]))), decimal_places = 3, math_mode = True, notab = False, print_text = True):
-    #text contiene i dati in forma di lista, ben formattati per essere stampati in console
-    text = ""
-    # formatted parameters contiene una lista dei parametri. La formattazione dipende dal valore di math_mode: se falso, l'esponente é in forma e+exp; altrimenti, la formattazione é tipo LaTeX
+    # legible_text contiene i dati in forma di lista, ben formattati per essere stampati in console
+    legible_text = ""
+    # formatted_text contiene il testo formattato in LaTeX
+    formatted_text = ""
+    # formatted parameters contiene una lista dei parametri formattati in LaTeX
     formatted_parameters = []
+    # legible_parameters contiene una lista di parametri in formato leggibile, da stampare in console
+    legible_parameters = []
     for i in range(len(param_values)):
         #Questa variabile contiene i dati grezzi, espressi come dato e+exp1 ± errore e+exp2 (ovviamente senza spazi)
         raw_data = str("{:.2e}".format(param_values[i])) + "±" + str("{:.2e}".format(param_errors[i]))
         
         if math_mode:
+            math_text = raw_data
             #individuo i due esponenti e li rimpiazzo con ^{exp}. Aggiungo i dollari per passare a math mode
-            exp1 = raw_data[raw_data.find("e"):raw_data.find("±")]
-            exp2 = raw_data[raw_data.rfind("e"):]
-            raw_data = raw_data.replace (exp1, "^{" + exp1[1:] + "}")
-            raw_data = raw_data.replace(exp2, "^{" + exp2[1:] + "}")
-            raw_data = "$" + raw_data + "$"
-        
-        formatted_parameters.append(raw_data)
+            exp1 = math_text[math_text.find("e"):math_text.find("±")]
+            exp2 = math_text[raw_data.rfind("e"):]
+            math_text = math_text.replace (exp1, "\cdot 10^{" + exp1[1:] + "}")
+            math_text = math_text.replace(exp2, "\cdot 10^{" + exp2[1:] + "}")
+            math_text = "$" + math_text + "$"
+            formatted_parameters.append(math_text)
+              
+        legible_parameters.append(raw_data)
         if notab:
-            text += (str(names[i]) + ": " + formatted_parameters[i])
+            legible_text += (str(names[i]) + ": " + legible_parameters[i])
+            if math_mode:
+                formatted_text += (str(names[i]) + ": " + formatted_parameters[i])
         else:
-            text += (str(names[i]) + ": \t" + formatted_parameters[i])
+            legible_text += (str(names[i]) + ": \t" + legible_parameters[i])
+            if math_mode:
+                formatted_text += (str(names[i]) + ": \t" + formatted_parameters[i])
+
         #se non sono arrivato all'ultimo elemento, passo alla prossima riga
         if i != (len(param_values) - 1):
-            text += "\n"
+            formatted_text += "\n"
+            legible_text += "\n"
 
     if print_text:
         print("Parametri del fit:")
-        print (text)
-    return (text)
+        print (legible_text)
+    if math_mode:
+        return (formatted_text)
+    else:
+        return(legible_text)
 
 ##FUNZIONE PER FITTING CURVA
 #func è il tuo modello, initial_guess la lista con le predizioni sui parametri
