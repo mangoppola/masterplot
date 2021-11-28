@@ -96,20 +96,35 @@ def print_plot(filename, extension = "png"):
 #RESTITUISCE LA STRINGA CON TUTTI I PARAMETRI (eventualmente, la stampa a schermo)
 # @names è una lista di nomi per le variabili che stai fittando. Normalmente, vengono dati come nomi i numeri interi
 # @decimal_places è il numero di cifre decimali che desideri nel tuo output
+# @math_mode serve a dare gli apici con garbo. Disabilitare se succedono cose strane
 # @notab serve a sostituire la tabulazione con un dato numero di spazi. Impostalo a true se vuoi usarlo nel grafico perchè a matplotlib non piace il \t
 # @print_text serve a stampare il testo in console
-def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[0]))), decimal_places = 3, notab = False, print_text = True):
+def parameters_text(param_values, param_errors, names = list(range(len(sys.argv[0]))), decimal_places = 3, math_mode = True, notab = False, print_text = True):
+    #text contiene i dati in forma di lista, ben formattati per essere stampati in console
     text = ""
+    # formatted parameters contiene una lista dei parametri. La formattazione dipende dal valore di math_mode: se falso, l'esponente é in forma e+exp; altrimenti, la formattazione é tipo LaTeX
+    formatted_parameters = []
     for i in range(len(param_values)):
-        text += (str(names[i]) + ": \t" +
-                 str(round(param_values[i], decimal_places)) + "±" +
-                 str(round(param_errors[i], decimal_places)))
+        #Questa variabile contiene i dati grezzi, espressi come dato e+exp1 ± errore e+exp2 (ovviamente senza spazi)
+        raw_data = str("{:.2e}".format(param_values[i])) + "±" + str("{:.2e}".format(param_errors[i]))
+        
+        if math_mode:
+            #individuo i due esponenti e li rimpiazzo con ^{exp}. Aggiungo i dollari per passare a math mode
+            exp1 = raw_data[raw_data.find("e"):raw_data.find("±")]
+            exp2 = raw_data[raw_data.rfind("e"):]
+            raw_data = raw_data.replace (exp1, "^{" + exp1[1:] + "}")
+            raw_data = raw_data.replace(exp2, "^{" + exp2[1:] + "}")
+            raw_data = "$" + raw_data + "$"
+        
+        formatted_parameters.append(raw_data)
+        if notab:
+            text += (str(names[i]) + ": " + formatted_parameters[i])
+        else:
+            text += (str(names[i]) + ": \t" + formatted_parameters[i])
         #se non sono arrivato all'ultimo elemento, passo alla prossima riga
         if i != (len(param_values) - 1):
             text += "\n"
-    if notab:
-        text = text.replace("\t", " ")
-        
+
     if print_text:
         print("Parametri del fit:")
         print (text)
