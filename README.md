@@ -1,4 +1,4 @@
-# masterplot
+# Masterplot
 Easy scientific data plotting and fitting
 
 I files
@@ -31,3 +31,6 @@ Utilizzo
 + Controlla la sezione in fondo per eventuali opzioni aggiuntive che desideri
 + Avvia il programma e segui le istruzioni
 
+To do list
+======
++ Aggiungere un'interfaccia grafica
